@@ -1,0 +1,85 @@
+﻿@page "/student/data"
+@page "/student/edit/{Id:int}"
+@using Services;
+@inject IStudentService studentService
+<PageTitle>@Title</PageTitle>
+
+<h3>@Title</h3>
+<a href="/students" class="btn btn-primary" role="button" <i class="fas fa-user-plus"></i>Back</a>
+<div class="row">
+    <div class="col-md-6">
+        <EditForm Model="@student" OnValidSubmit="Save">
+            <DataAnnotationsValidator/>
+
+            <div class="form-group">
+                <label for="FirstName">First Name</label>
+               <InputText class="form-control" @bind-Value="student.FirstName" />
+               <ValidationMessage For="@(()=>student.FirstName)" />
+            </div>
+
+            <div class="form-group">
+                <label for="LastName">Last Name</label>
+                <InputText class="form-control" @bind-Value="student.LastName" />
+                <ValidationMessage For="@(()=>student.LastName)" />
+            </div>
+
+            <div class="form-group">
+                <label for="Email">Email</label>
+                <InputText class="form-control" @bind-Value="student.Email" />
+                <ValidationMessage For="@(()=>student.Email)" />
+            </div>
+
+            <div class="form-group">
+                <label for="Coursecode">Course code</label>
+                <InputText class="form-control" @bind-Value="student.Coursecode" />
+                <ValidationMessage For="@(()=>student.Coursecode)" />
+            </div>
+
+            <div class="form-group">
+                <label for="Coursetitle">Course Title</label>
+                <InputText class="form-control" @bind-Value="student.Coursetitle" />
+                <ValidationMessage For="@(()=>student.Coursetitle)" />
+            </div>
+
+            <div class="my-2">
+                @message
+            </div>
+
+            <div class="my-2">
+                <button type="submit" class="btn btn-warning">Insert</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private string message = string.Empty;
+    Models.Student student = new();
+    private string Title = "Add Student";
+
+    private void Save()
+    {
+            message = "wait...";
+            if (studentService.AddUpdate(student))
+            {
+                message = "Sucessfully added";
+                student = new();
+            }
+            else
+            {
+                message = "Could not saved";
+            }
+    }
+    protected override void OnInitialized()
+    {
+            if (Id > 0)
+            {
+                Title = "Update Person";
+                student = studentService.FindById(Id);
+            }
+            base.OnInitialized();
+    }
+    
+}
